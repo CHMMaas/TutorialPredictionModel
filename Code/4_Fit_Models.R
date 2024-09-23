@@ -6,7 +6,7 @@ library(survival)
 library(rms)      # fit.mult.impute
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load imputed data with S object
 load(paste0(file.path, "Data/imputed.data.Rdata"))
@@ -78,6 +78,9 @@ bw.model <- fit.mult.impute(form.bw,
                             fit.reps=TRUE)
 # display predictor effects
 summary(bw.model)
+
+# present effect for age per decade
+summary(bw.model, age=c(0, 10))
 
 # display variable importance using chi-square test statistic
 anova(bw.model)
