@@ -8,7 +8,7 @@ library(arsenal)   # Table 1
 library(flextable) # save to Word
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load Excel data
 # data <- readxl::read_excel("C:/.../file_data_name.xlsx")

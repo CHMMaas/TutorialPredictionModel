@@ -7,11 +7,14 @@ library(survminer) # Kaplan-Meier curve
 library(prodlim)   # median follow-up time
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load dummy data from survival package
 data(pbc, package="survival")
 data <- pbc
+
+# add center variable for illustration
+data$center <- rep(1:2, length.out=nrow(data))
 
 # The following is only relevent if you're dealing with time-to-event data:
 # generate the Surv object for the outcome
@@ -48,5 +51,6 @@ ggsave(filename=paste0(file.path, "Results/KM.plot.png"),
 stats::quantile(prodlim::prodlim(prodlim::Hist(time/365, status==2)~1, 
                                  data=data, reverse=TRUE))
 
+# save data elements
 save(data, S, S.10, horizon,
      file=paste0(file.path, "Data/data.Rdata"))

@@ -7,13 +7,10 @@ library(visdat)  # visualize missing data
 library(mice)    # multiple imputation
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load data with S object inside
 load(paste0(file.path, "Data/data.Rdata"))
-
-# add center variable for illustration
-data$center <- rep(1:2, length.out=nrow(data))
 
 # select the outcome and candidate variables based on literature 
 data <- select(data, time, status, 
