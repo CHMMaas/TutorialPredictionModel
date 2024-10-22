@@ -13,3 +13,7 @@ File 5_Uniform_Shrinkage_Optimism_Corrected_C_Index.R presents how to use bootst
 File 6_Model_Performance.R shows how to make a calibration plot with performance metrics.
 
 File 7_Internal_External_Cross_Validation.R illustrates how to perform internal-external cross-validation, i.e., leaving one of the j centers out of development, execute the modeling strategy (backward selection and uniform shrinkage factor), and validate the new model on the jth center, repeating this until each center has been a validation set once.
+
+# Updates
+22 October 2024:
+1. File 4_Fit_Models.R was changed to have the same predictors in the flexible full model as the less flexible full model.
