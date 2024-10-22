@@ -3,10 +3,10 @@ rm(list=ls())
 
 # load libraries
 library(survival)
-library(rms)      # fit.mult.impute
+library(rms)   # validate
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load data and models 
 load(paste0(file.path, "Data/models.Rdata"))
@@ -15,7 +15,7 @@ load(paste0(file.path, "Data/models.Rdata"))
 slope <- c()
 opt.C <- c()
 for (i in 1:m){
-  val.model <- validate(full.model$fits[[i]], 
+  val.model <- rms::validate(full.model$fits[[i]], 
                         set.seed(1),
                         B=200, 
                         bw=TRUE,
@@ -34,7 +34,7 @@ shrinkage.factor*bw.model$coefficients
 
 # optimism-corrected C-index
 optimism.C <- mean(opt.C)
-original.C <- concordance(bw.model)
+original.C <- survival::concordance(bw.model)
 cat("Optimism-corrected C-index:",
     round(original.C$concordance - optimism.C, 2), ", 95% CI:",
     round(original.C$concordance - 1.96*sqrt(original.C$var) - optimism.C, 2), "-",

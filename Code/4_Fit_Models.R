@@ -19,10 +19,10 @@ options(datadist="dd")
 # fit full model with all candidate variables on each imputed data set
 # model all conitnuous variables flexible to see if that is needed
 full.non.linear.model <- Hmisc::fit.mult.impute(S.10 ~ rcs(age, 3) + sex + ascites + hepato + 
-                                                spiders + edema + rcs(bili, 3) + rcs(chol, 3) + 
-                                                rcs(albumin, 3) + rcs(copper, 3) + 
-                                                rcs(alk.phos, 3) + rcs(ast, 3) + trig + 
-                                                rcs(platelet, 3) + rcs(protime, 3) + stage, 
+                                                  spiders + edema + rcs(bili, 3) + rcs(chol, 3) +
+                                                  rcs(albumin, 3) + rcs(copper, 3) +
+                                                  rcs(alk.phos, 3) + rcs(ast, 3) + trig +
+                                                  rcs(platelet, 3) + rcs(protime, 3) + stage, 
                               cph,
                               fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
                               xtrans=imputed.data,
@@ -34,15 +34,16 @@ anova(full.non.linear.model)
 # this displays only significant non-linear effects for age and bili
 
 # display predictor effects
-# rcs(bili, 3) gives similar effect than log(bili)
-# rcs(age, 3) gives similar effect to pol(age, 2)
+# rcs(age, 3) gives similar effect as pol(age, 2)
+# rcs(bili, 3) gives similar effect as log(bili)
+# rcs(copper, 3) gives similar effect as log(copper)
 plot(Predict(full.non.linear.model))
 
 # fit full model with all candidate variables on each imputed data set
 form.full <- S.10 ~ pol(age, 2) + sex + ascites + hepato + 
-  spiders + edema + log(bili) + rcs(chol, 3) + 
-  albumin + log(copper) + 
-  alk.phos + ast + trig + 
+  spiders + edema + log(bili) + chol +
+  albumin + log(copper) +
+  alk.phos + ast + trig +
   platelet + protime + stage
 full.model <- Hmisc::fit.mult.impute(form.full, 
                               cph,
@@ -63,10 +64,10 @@ survival::cox.zph(full.model)
 plot(Predict(full.model))
 
 # perform stepwise backward selection
-bw.model <- step(full.model,
-                 direction="backward",
-                 k=log(nrow(data))) # BIC criterion, default is AIC
-bw.model$formula
+# bw.model <- step(full.model,
+#                  direction="backward",
+#                  k=log(nrow(data))) # BIC criterion, default is AIC
+# bw.model$formula
 # this gives final model: S.10 ~ pol(age, 2) + edema + log(bili) + albumin + protime
 
 # alternatively using a fastbw function
@@ -94,7 +95,9 @@ anova(bw.model)
 plot(Predict(bw.model))
 
 # nomogram
-# rms::nomogram(bw.model)
+plot(rms::nomogram(bw.model, 
+                   age=c(25, 50, 75), # optional: specify the labels of variables
+                   bili=c(1, 5, 10, 15, 28))) # specify at least minimum bilirubin, because log(0)=-Inf
 
 # save models
 save(data, m, imputed.data, S, S.10, horizon,

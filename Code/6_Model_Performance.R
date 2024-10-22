@@ -2,20 +2,20 @@
 rm(list=ls())
 
 # load libraries
-library(survival)
-library(rms)             # fit.mult.impute, val.prob
-# remotes::install_github("CHMMaas/PredictionTools")
-library(PredictionTools) # documentation: https://github.com/CHMMaas/PredictionTools
-library(dcurves)
+# library(survival)
+library(rms)
+# # remotes::install_github("CHMMaas/PredictionTools")
+# library(PredictionTools) # documentation: https://github.com/CHMMaas/PredictionTools
+# library(dcurves)
 
 # set file.path
-file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models/R tutorials/"
+file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 
 # load data and models 
 load(paste0(file.path, "Data/shrinkage.Rdata"))
 
 # set data distributions
-dd <- datadist(data)
+dd <- rms::datadist(data)
 options(datadist="dd")
 
 # make calibration plots with performance metrics
@@ -42,7 +42,7 @@ for (model in model.df$model.short){
                       type="lp")
       
       # baseline hazard
-      f.basehaz.i <- basehaz(cph(form.model, data=mice::complete(imputed.data, i), 
+      f.basehaz.i <- survival::basehaz(rms::cph(form.model, data=mice::complete(imputed.data, i), 
                                  x=TRUE, y=TRUE, se.fit=TRUE))
     } else if (model=="shrunk"){
       # linear predictor
@@ -64,12 +64,16 @@ for (model in model.df$model.short){
     p <- cbind(p, PredictionTools::fun.event(lp=lp.i, h0=h0.i))
   }
   # save predictions
+  p <- as.matrix(p)
   assign(paste0("p.", model), p)
   
-  # calibraiton plots
+  # to make calibration plots: replace predictions ==1 to 0.9999 because log(0)=-Inf
+  p[p==1] <- 0.99999
+  
+  # calibration plots
   png(filename=paste0(file.path, "Results/", model, ".model.performance.png"),
       width=2000, height=2000, res=300)
-  PredictionTools::val.surv.mi(p=as.matrix(p), y=S.10, time=horizon, g=3,
+  PredictionTools::val.surv.mi(p=p, y=S.10, time=horizon, g=3,
                                main=model.df[model.df$model.short==model, "model.title"], 
                                CI.metrics=TRUE, 
                                show.metrics=c(rep(TRUE, 5), FALSE))
@@ -77,15 +81,14 @@ for (model in model.df$model.short){
   
   assign(paste0("p.", model), p)
 }
-
 # check if models predict well on average
 1-summary(survival::survfit(S.10~1, data=data), time=horizon)$surv
 mean(rowMeans(p.full))
 mean(rowMeans(p.bw))
 
 # decision curve analysis
-ggsave(file=paste0(file.path, "Results/dca.png"),
-       plot=dca(y ~ Model, 
+ggplot2::ggsave(file=paste0(file.path, "Results/dca.png"),
+       plot=dcurves::dca(y ~ Model, 
                 time=horizon,
                 data=data.frame(y=S.10,
                                 Model=rowMeans(p.bw))) |> 
