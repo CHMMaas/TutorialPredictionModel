@@ -18,15 +18,16 @@ options(datadist="dd")
 # fit full model with all candidate variables on each imputed data set
 # model all conitnuous variables flexible to see if that is needed
 full.non.linear.model <- fit.mult.impute(S.10 ~ rcs(age, 3) + sex + ascites + hepato + 
-                                spiders + edema + rcs(bili, 3) + rcs(chol, 3) + 
-                                rcs(albumin, 3) + rcs(copper, 3) + 
-                                rcs(alk.phos, 3) + rcs(ast, 3) + trig + 
-                                rcs(platelet, 3) + rcs(protime, 3) + stage, 
+                                                spiders + edema + rcs(bili, 3) + rcs(chol, 3) + 
+                                                rcs(albumin, 3) + rcs(copper, 3) + 
+                                                rcs(alk.phos, 3) + rcs(ast, 3) + trig + 
+                                                rcs(platelet, 3) + rcs(protime, 3) + stage, 
                               cph,
                               fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
                               xtrans=imputed.data,
                               data=data,
                               fit.reps=TRUE)
+summary(full.non.linear.model)
 # display chi-square tests for non-linearities
 anova(full.non.linear.model)
 # this displays only significant non-linear effects for age and bili
@@ -37,7 +38,11 @@ anova(full.non.linear.model)
 plot(Predict(full.non.linear.model))
 
 # fit full model with all candidate variables on each imputed data set
-form.full <- S.10 ~ pol(age, 2) + sex + ascites + hepato + spiders + edema + stage
+form.full <- S.10 ~ pol(age, 2) + sex + ascites + hepato + 
+  spiders + edema + log(bili) + rcs(chol, 3) + 
+  albumin + log(copper) + 
+  alk.phos + ast + trig + 
+  platelet + protime + stage
 full.model <- fit.mult.impute(form.full, 
                               cph,
                               fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
@@ -57,19 +62,18 @@ cox.zph(full.model)
 plot(Predict(full.model))
 
 # perform stepwise backward selection
-# bw.model <- step(full.model,
-#                  data=data,
-#                  direction="backward",
-#                  k=log(nrow(data))) # BIC criterion, default is AIC
-# bw.model$formula
-# this gives final model: S.10 ~ pol(age, 2) + ascites + hepato + edema
+bw.model <- step(full.model,
+                 direction="backward",
+                 k=log(nrow(data))) # BIC criterion, default is AIC
+bw.model$formula
+# this gives final model: S.10 ~ pol(age, 2) + edema + log(bili) + albumin + protime
 
 # alternatively using a fastbw function
-# fastbw(full.model, type="individual", rule="p", sls=0.05)
-# this gives final model: age     ascites hepato  spiders edema 
+fastbw(full.model, type="individual", rule="p", sls=0.05)
+# this gives final model: age edema bili albumin copper protime stage 
 
 # fit backward selected model
-form.bw <- S.10 ~ pol(age, 2) + ascites + hepato + edema
+form.bw <- S.10 ~ pol(age, 2) + edema + log(bili) + albumin + protime
 bw.model <- fit.mult.impute(form.bw, 
                             cph,
                             fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
@@ -89,7 +93,7 @@ anova(bw.model)
 plot(Predict(bw.model))
 
 # nomogram
-rms::nomogram(bw.model)
+# rms::nomogram(bw.model)
 
 # save models
 save(data, m, imputed.data, S, S.10, horizon,
