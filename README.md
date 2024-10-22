@@ -17,3 +17,4 @@ File 7_Internal_External_Cross_Validation.R illustrates how to perform internal-
 # Updates
 22 October 2024:
 1. File 4_Fit_Models.R was changed to have the same predictors in the flexible full model as the less flexible full model.
+2. Ensure that package:: references are added to all .R files.
