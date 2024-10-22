@@ -3,7 +3,8 @@ rm(list=ls())
 
 # load libraries
 library(survival)
-library(rms)      # fit.mult.impute
+library(rms)          # cph or lrm
+library(Hmisc)      # fit.mult.impute
 
 # set file.path
 file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
@@ -12,12 +13,12 @@ file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predi
 load(paste0(file.path, "Data/imputed.data.Rdata"))
 
 # set data distributions
-dd <- datadist(data)
+dd <- rms::datadist(data)
 options(datadist="dd")
 
 # fit full model with all candidate variables on each imputed data set
 # model all conitnuous variables flexible to see if that is needed
-full.non.linear.model <- fit.mult.impute(S.10 ~ rcs(age, 3) + sex + ascites + hepato + 
+full.non.linear.model <- Hmisc::fit.mult.impute(S.10 ~ rcs(age, 3) + sex + ascites + hepato + 
                                                 spiders + edema + rcs(bili, 3) + rcs(chol, 3) + 
                                                 rcs(albumin, 3) + rcs(copper, 3) + 
                                                 rcs(alk.phos, 3) + rcs(ast, 3) + trig + 
@@ -43,7 +44,7 @@ form.full <- S.10 ~ pol(age, 2) + sex + ascites + hepato +
   albumin + log(copper) + 
   alk.phos + ast + trig + 
   platelet + protime + stage
-full.model <- fit.mult.impute(form.full, 
+full.model <- Hmisc::fit.mult.impute(form.full, 
                               cph,
                               fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
                               xtrans=imputed.data,
@@ -56,7 +57,7 @@ summary(full.model)
 anova(full.model)
 
 # test proportional hazards assumption
-cox.zph(full.model)
+survival::cox.zph(full.model)
 
 # display predictor effects
 plot(Predict(full.model))
@@ -74,7 +75,7 @@ fastbw(full.model, type="individual", rule="p", sls=0.05)
 
 # fit backward selected model
 form.bw <- S.10 ~ pol(age, 2) + edema + log(bili) + albumin + protime
-bw.model <- fit.mult.impute(form.bw, 
+bw.model <- Hmisc::fit.mult.impute(form.bw, 
                             cph,
                             fitargs=list(x=TRUE, y=TRUE, surv=TRUE),
                             xtrans=imputed.data,

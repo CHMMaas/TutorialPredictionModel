@@ -13,10 +13,10 @@ file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predi
 load(paste0(file.path, "Data/data.Rdata"))
 
 # select the outcome and candidate variables based on literature 
-data <- select(data, time, status, 
-         trt, age, sex, ascites, hepato, spiders, edema,
-         bili, chol, albumin, copper, alk.phos, ast, trig, 
-         platelet, protime, stage, center)
+data <- dplyr::select(data, time, status, 
+               trt, age, sex, ascites, hepato, spiders, edema,
+               bili, chol, albumin, copper, alk.phos, ast, trig, 
+               platelet, protime, stage, center)
 
 # binary and categorical variables should be factor variables
 factor.var <- c("sex", "ascites", "hepato", "spiders", "stage", "center")
@@ -27,10 +27,11 @@ visdat::vis_miss(data)
 
 # multiple imputation
 m <- 5
-imputed.data <- mice(data, m=m, seed=1, print=FALSE)
+imputed.data <- mice::mice(data, m=m, seed=1, print=FALSE)
+imputed.data$loggedEvents
 
 # visualize imputations
-densityplot(imputed.data)
+mice::densityplot(imputed.data)
 
 # save imputed data
 save(data, m, imputed.data, S, S.10, horizon,

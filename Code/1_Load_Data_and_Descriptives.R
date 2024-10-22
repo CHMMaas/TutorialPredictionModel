@@ -24,9 +24,9 @@ data <- pbc
 data$center <- rep(1:2, length.out=nrow(data))
 
 # select the variables you want to display in your descriptives table
-data <- select(data, trt, age, sex, ascites, hepato, spiders, edema,
-         bili, chol, albumin, copper, alk.phos, ast, trig, 
-         platelet, protime, stage, center)
+data <- dplyr::select(data, trt, age, sex, ascites, hepato, spiders, edema,
+               bili, chol, albumin, copper, alk.phos, ast, trig, 
+               platelet, protime, stage, center)
 
 # binary and categorical variables should be factor variables
 factor.var <- c("sex", "ascites", "hepato", "spiders", "stage", "center")

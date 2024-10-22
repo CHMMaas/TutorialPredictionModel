@@ -20,13 +20,13 @@ data$center <- rep(1:2, length.out=nrow(data))
 # generate the Surv object for the outcome
 # transform time from days to years
 # dichotomize the event (0/1/2 for censored, transplant, dead) 
-S <- Surv(time=data$time/365, event=as.numeric(data$status==2))
+S <- survival::Surv(time=data$time/365, event=as.numeric(data$status==2))
 
 # limit the outcome to your time horizon
 horizon <- 10
 S.10 <- S
-S.10[S.10[, 1]>horizon, 2] <- 0
-S.10[S.10[, 1]>horizon, 1] <- horizon
+S.10[S.10[, 1]>horizon, 2] <- 0       # reset the censor/death
+S.10[S.10[, 1]>horizon, 1] <- horizon # reset the time
 
 # make Kaplan-Meier curve
 KM <- survival::survfit(S.10 ~ trt, data=data)
@@ -42,12 +42,13 @@ KM.plot <- survminer::ggsurvplot(KM,
                                  conf.int=TRUE)
 
 # save Kaplan-Meier curve
-ggsave(filename=paste0(file.path, "Results/KM.plot.png"),
-       plot=ggarrange(KM.plot$plot, KM.plot$table, 
-                      nrow=2, heights=c(3, 1)),
+ggplot2::ggsave(filename=paste0(file.path, "Results/KM.plot.png"),
+       plot=ggpubr::ggarrange(KM.plot$plot, KM.plot$table, 
+                              nrow=2, heights=c(3, 1)),
        width=7, height=7, dpi=300)
 
 # median follow-up time
+median(pbc$time)/365
 stats::quantile(prodlim::prodlim(prodlim::Hist(time/365, status==2)~1, 
                                  data=data, reverse=TRUE))
 
