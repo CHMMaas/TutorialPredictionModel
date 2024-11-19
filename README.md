@@ -19,3 +19,7 @@ File 7_Internal_External_Cross_Validation.R illustrates how to perform internal-
 1. File 4_Fit_Models.R was changed to have the same predictors in the flexible full model as the less flexible full model.
 2. Ensure that package:: references are added to all .R files.
 3. File 6_Model_Performance.R: ensure that if predictions are exactly 1, the validation plot can still be made.
+
+19 November 2024:
+1. File 6_Model_Performance.R: added dependencies
+2. File 6_Model_Performance.R: added the check of average shrunk predictions
