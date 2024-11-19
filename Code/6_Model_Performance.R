@@ -2,11 +2,11 @@
 rm(list=ls())
 
 # load libraries
-# library(survival)
+library(survival)
 library(rms)
 # # remotes::install_github("CHMMaas/PredictionTools")
-# library(PredictionTools) # documentation: https://github.com/CHMMaas/PredictionTools
-# library(dcurves)
+library(PredictionTools) # documentation: https://github.com/CHMMaas/PredictionTools
+library(dcurves)
 
 # set file.path
 file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
