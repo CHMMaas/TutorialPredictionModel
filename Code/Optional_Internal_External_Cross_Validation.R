@@ -95,11 +95,8 @@ for (region in unique(data$center)){
   # plot calibration plot for region j
   S.10.j <- S.10[data$center==region, ]
   
-  # to make calibration plots: replace predictions ==1 to 0.9999 because log(0)=-Inf
-  p.region[p.region==1] <- 0.99999
-  
   # make figure
-  PredictionTools::val.surv.mi(p=p.region, y=S.10.j, time=horizon, g=3,
+  PredictionTools::val.surv.mi(p=p.region, y=S.10.j, time=horizon, g=2,
                                CI.metrics=TRUE, main=paste("Center", region),
                                show.metrics=c(rep(TRUE, 5), FALSE))
 }
