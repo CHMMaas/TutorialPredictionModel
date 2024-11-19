@@ -23,3 +23,5 @@ File 7_Internal_External_Cross_Validation.R illustrates how to perform internal-
 19 November 2024:
 1. File 6_Model_Performance.R: added dependencies
 2. File 6_Model_Performance.R: added the check of average shrunk predictions
+3. File 4_Fit_Models.R: less candidate predictors to avoid P(Y=1)=1
+4. File 6_Model_Performance.R: added histogram below decision curve analysis figure
