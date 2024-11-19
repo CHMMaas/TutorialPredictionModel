@@ -49,13 +49,13 @@ for (model in model.df$model.short){
                                  x=TRUE, y=TRUE, se.fit=TRUE))
     } else if (model=="shrunk"){
       # linear predictor
-      lp.i <- predict(bw.model$fits[[i]],
+      lp.bw.i <- predict(bw.model$fits[[i]],
                       newdata=mice::complete(imputed.data,i),
                       type="lp")
-      lp.shrunk.i <- shrinkage.factor*lp.i
+      lp.i <- shrinkage.factor*lp.bw.i
       
       # baseline hazard
-      offset.lp.i <- survival::coxph(S.10 ~ offset(lp.shrunk.i), 
+      offset.lp.i <- survival::coxph(S.10 ~ offset(lp.i), 
                            data=mice::complete(imputed.data,i))
       f.basehaz.i <- survival::basehaz(offset.lp.i)
     }
