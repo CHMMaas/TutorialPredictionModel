@@ -7,6 +7,11 @@ library(dplyr)     # data manipulations
 library(arsenal)   # Table 1
 library(flextable) # save to Word
 
+# make sure to create the following folder structure:
+# 1. Code
+# 2. Data
+# 3. Results
+
 # set file.path
 file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
 

@@ -3,7 +3,7 @@ rm(list=ls())
 
 # load libraries
 library(survival)
-library(rms)   # validate
+library(rms)      # validate
 
 # set file.path
 file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
@@ -37,8 +37,8 @@ optimism.C <- mean(opt.C)
 original.C <- survival::concordance(bw.model)
 cat("Optimism-corrected C-index:",
     round(original.C$concordance - optimism.C, 2), ", 95% CI:",
-    round(original.C$concordance - 1.96*sqrt(original.C$var) - optimism.C, 2), "-",
-    round(original.C$concordance + 1.96*sqrt(original.C$var) - optimism.C, 2), "\n")
+    round(original.C$concordance - qnorm(0.975)*sqrt(original.C$var) - optimism.C, 2), "-",
+    round(original.C$concordance + qnorm(0.975)*sqrt(original.C$var) - optimism.C, 2), "\n")
 
 # save shrinkage
 save(data, m, imputed.data, S, S.10, horizon,

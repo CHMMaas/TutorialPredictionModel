@@ -4,9 +4,11 @@ rm(list=ls())
 # load libraries
 library(survival)
 library(rms)
-# # remotes::install_github("CHMMaas/PredictionTools")
+# remotes::install_github("CHMMaas/PredictionTools")
 library(PredictionTools) # documentation: https://github.com/CHMMaas/PredictionTools
 library(dcurves)
+library(ggplot2) # make plots
+library(ggpubr)  # combine plots
 
 # set file.path
 file.path <- "C:/Users/carol/OneDrive - Erasmus MC/Projects Tufts/Course - Predictive Models 2024/R tutorials/"
@@ -38,11 +40,12 @@ for (model in model.df$model.short){
     if (model != "shrunk"){
       # linear predictor
       lp.i <- predict(fitted.model$fits[[i]],
-                      newdata=mice::complete(imputed.data,i),
+                      newdata=mice::complete(imputed.data, i),
                       type="lp")
       
       # baseline hazard
-      f.basehaz.i <- survival::basehaz(rms::cph(form.model, data=mice::complete(imputed.data, i), 
+      f.basehaz.i <- survival::basehaz(rms::cph(form.model, 
+                                                data=mice::complete(imputed.data, i), 
                                  x=TRUE, y=TRUE, se.fit=TRUE))
     } else if (model=="shrunk"){
       # linear predictor
@@ -67,9 +70,6 @@ for (model in model.df$model.short){
   p <- as.matrix(p)
   assign(paste0("p.", model), p)
   
-  # to make calibration plots: replace predictions ==1 to 0.9999 because log(0)=-Inf
-  p[p==1] <- 0.99999
-  
   # calibration plots
   png(filename=paste0(file.path, "Results/", model, ".model.performance.png"),
       width=2000, height=2000, res=300)
@@ -87,11 +87,25 @@ mean(rowMeans(p.full))
 mean(rowMeans(p.bw))
 mean(rowMeans(p.shrunk))
 
-# decision curve analysis
+# decision curve analysis (DCA)
+# dca plot
+dca.plot <- dcurves::dca(y ~ Model, 
+                         time=horizon,
+                         data=data.frame(y=S.10,
+                                         Model=rowMeans(p.bw))) |> 
+  plot(smooth = TRUE)
+
+# histogram
+hist.pred <- ggplot(data=data.frame(Predictions=rowMeans(p.bw)),
+                    aes(x=Predictions)) +
+  ggplot2::geom_histogram(fill="#619bff", color="grey", alpha=0.6, binwidth=0.01) +
+  ggplot2::ylab("Count") +
+  ggplot2::theme_minimal() +
+  ggplot2::theme(panel.background = ggplot2::element_rect(fill="white", color=NA),
+        plot.background = ggplot2::element_rect(fill="white", color=NA))
+
+# save
 ggplot2::ggsave(file=paste0(file.path, "Results/dca.png"),
-       plot=dcurves::dca(y ~ Model, 
-                time=horizon,
-                data=data.frame(y=S.10,
-                                Model=rowMeans(p.bw))) |> 
-         plot(smooth = TRUE),
-       width=5, height=5, dpi=300)
+       plot=ggpubr::ggarrange(dca.plot, hist.pred,
+                      nrow=2, ncol=1, heights=c(2, 1), align="v"),
+       width=16, height=16, units="cm", dpi=300)
