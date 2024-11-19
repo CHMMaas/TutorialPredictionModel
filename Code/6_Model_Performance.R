@@ -52,9 +52,9 @@ for (model in model.df$model.short){
       lp.shrunk.i <- shrinkage.factor*lp.i
       
       # baseline hazard
-      offset.lp.i <- coxph(S.10 ~ offset(lp.shrunk.i), 
+      offset.lp.i <- survival::coxph(S.10 ~ offset(lp.shrunk.i), 
                            data=mice::complete(imputed.data,i))
-      f.basehaz.i <- basehaz(offset.lp.i)
+      f.basehaz.i <- survival::basehaz(offset.lp.i)
     }
     # obtain baseline hazard
     h0.i <- f.basehaz.i$hazard[f.basehaz.i$time==max(f.basehaz.i$time[f.basehaz.i$time<=horizon])]
@@ -85,6 +85,7 @@ for (model in model.df$model.short){
 1-summary(survival::survfit(S.10~1, data=data), time=horizon)$surv
 mean(rowMeans(p.full))
 mean(rowMeans(p.bw))
+mean(rowMeans(p.shrunk))
 
 # decision curve analysis
 ggplot2::ggsave(file=paste0(file.path, "Results/dca.png"),
