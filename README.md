@@ -26,3 +26,6 @@ File 7_Internal_External_Cross_Validation.R illustrates how to perform internal-
 4. File 6_Model_Performance.R: added the check of average shrunk predictions
 5. File 6_Model_Performance.R: updated the creation of predictions using the shrunk model
 6. File 6_Model_Performance.R: added histogram below decision curve analysis figure
+
+17 December 2024:
+1. File 6_Model_Performance.R: added ICI to calibration plots, changed show.metrics=c(rep(TRUE, 6), FALSE)
