@@ -76,7 +76,7 @@ for (model in model.df$model.short){
   PredictionTools::val.surv.mi(p=p, y=S.10, time=horizon, g=3,
                                main=model.df[model.df$model.short==model, "model.title"], 
                                CI.metrics=TRUE, 
-                               show.metrics=c(rep(TRUE, 5), FALSE))
+                               show.metrics=c(rep(TRUE, 6), FALSE))
   dev.off()
   
   assign(paste0("p.", model), p)
